@@ -15,7 +15,7 @@ from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 class VaccinationAppointment():
     """Class representing an appointment  for the vaccination of a patient"""
 
-    def __init__( self, patient_sys_id, patient_phone_number, days ):
+    def __init__( self, patient_sys_id, patient_phone_number, days):
         self.__alg = "SHA-256"
         self.__type = "DS"
         self.__patient_sys_id = PatientSystemId(patient_sys_id).value
