@@ -10,6 +10,11 @@ from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
+from uc3m_care.vaccine_manager import VaccineManager
+
+from uc3m_care import JSON_FILES_PATH
+import json
+from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
 #pylint: disable=too-many-instance-attributes
 class VaccinationAppointment():
@@ -145,6 +150,47 @@ class VaccinationAppointment():
             raise VaccineManagementException("The date has to be greater than today")
         else:
             return True
+
+    def cancelation_appointment(self, input_file):
+        file_cancel_date = JSON_FILES_PATH + "cancel_appointment.json"
+        # first read the file
+        try:
+            with open(file_cancel_date, "r", encoding="utf-8", newline="") as file:
+                data_list = json.load(file)
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+        except FileNotFoundError as ex:
+            raise VaccineManagementException("Store_date not found") from ex
+
+        file_store_date = JSON_FILES_PATH + "store_date.json"
+        # first read the file
+        try:
+            with open(file_store_date, "r", encoding="utf-8", newline="") as file:
+                store_date = json.load(file)
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+        except FileNotFoundError as ex:
+            raise VaccineManagementException("Store_date not found") from ex
+
+        found = False
+        for item in store_date:
+            if item["_VaccinationAppointment__date_signature"] == data_list["date_signature"]:
+                found = True
+                vaccination_date = item["_VaccinationAppointment__appointment_date"]
+
+                today = freeze_time(datetime.today().timestamp())
+                today.start()
+                if vaccination_date < today:
+                    raise VaccineManagementException("The appointment has already passed")
+                today.stop()
+        vaccination_date = datetime.fromtimestamp(vaccination_date).isoformat()
+        if not found:
+            raise VaccineManagementException("Appointment not found")
+        date_signature = data_list["date_signature"]
+        boolean = VaccineManager.vaccine_patient(date_signature, vaccination_date)
+        if boolean:
+            raise VaccineManagementException("The vaccine has already been administered")
+        return date_signature
 
 
     def is_valid_today( self ):

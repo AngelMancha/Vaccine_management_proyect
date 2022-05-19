@@ -1,6 +1,8 @@
 """Module """
+
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.data.vaccination_appointment import VaccinationAppointment
+
 
 
 class VaccineManager:
@@ -41,6 +43,13 @@ class VaccineManager:
             """Register the vaccination of the patient"""
             appointment = VaccinationAppointment.get_appointment_from_date_signature(date_signature, date)
             return appointment.register_vaccination()
+
+        def cancel_appointment(self, input_file):
+            """Returns a string that represent the date_signature of the appointment canceled or
+            a VaccineManagementException"""
+            date_signature = VaccinationAppointment.cancelation_appointment(input_file)
+            return None
+
 
     instance = None
 
