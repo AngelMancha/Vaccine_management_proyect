@@ -15,7 +15,7 @@ from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 class VaccinationAppointment():
     """Class representing an appointment  for the vaccination of a patient"""
 
-    def __init__( self, patient_sys_id, patient_phone_number, days):
+    def __init__( self, patient_sys_id, patient_phone_number, date):
         self.__alg = "SHA-256"
         self.__type = "DS"
         self.__patient_sys_id = PatientSystemId(patient_sys_id).value
@@ -25,12 +25,10 @@ class VaccinationAppointment():
         self.__phone_number = PhoneNumber(patient_phone_number).value
         justnow = datetime.utcnow()
         self.__issued_at = datetime.timestamp(justnow)
-        if days == 0:
-            self.__appointment_date = 0
-        else:
-            #timestamp is represneted in seconds.microseconds
-            #age must be expressed in senconds to be added to the timestap
-            self.__appointment_date = self.__issued_at + (days * 24 * 60 * 60)
+
+        #timestamp is represneted in seconds.microseconds
+        #age must be expressed in senconds to be added to the timestap
+        self.__appointment_date = datetime.timestamp(datetime.fromisoformat(date))
         self.__date_signature = self.vaccination_signature
 
 
@@ -113,13 +111,24 @@ class VaccinationAppointment():
         return appointment
 
     @classmethod
-    def create_appointment_from_json_file( cls, json_file ):
+    def create_appointment_from_json_file( cls, json_file, date ):
         """returns the vaccination appointment for the received input json file"""
+        #VaccinationAppointment.check_date(VaccinationAppointment(), date)
+
+        try:
+            datetime.fromisoformat(date)
+        except ValueError:
+            raise VaccineManagementException("Incorrect ISO format")
+
+        current_date = datetime.today().isoformat()
+        if date <= current_date:
+            raise VaccineManagementException("The date has to be greater than today")
+
         appointment_parser = AppointmentJsonParser(json_file)
+
         new_appointment = cls(
-            appointment_parser.json_content[appointment_parser.PATIENT_SYSTEM_ID_KEY],
-            appointment_parser.json_content[appointment_parser.CONTACT_PHONE_NUMBER_KEY],
-            10)
+            appointment_parser.json_content[appointment_parser.PATIENT_SYSTEM_ID_KEY], appointment_parser.json_content[appointment_parser.CONTACT_PHONE_NUMBER_KEY], date)
+
         return new_appointment
 
     def check_date(self, date):

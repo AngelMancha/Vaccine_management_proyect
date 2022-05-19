@@ -8,7 +8,7 @@ from uc3m_care import VaccineManagementException
 from uc3m_care import JSON_FILES_PATH, JSON_FILES_RF2_PATH
 from uc3m_care import AppointmentsJsonStore
 from uc3m_care import PatientsJsonStore
-
+from datetime import datetime
 
 param_list_nok = [("test_dup_all.json","JSON Decode Error - Wrong JSON Format"),
                     ("test_dup_char_plus.json","phone number is not valid"),
@@ -49,8 +49,9 @@ class TestGetVaccineDate(TestCase):
         """test ok"""
         file_test = JSON_FILES_RF2_PATH + "test_ok.json"
         my_manager = VaccineManager()
+        date = "2023-04-06"
         #date = "2022-03-18"
-    #first , prepare my test , remove store patient
+        #first , prepare my test , remove store patient
         file_store = PatientsJsonStore()
         file_store.delete_json_file()
         file_store_date = AppointmentsJsonStore()
@@ -61,8 +62,8 @@ class TestGetVaccineDate(TestCase):
                                           "minombre tienelalongitudmaxima",
                                           "Regular","+34123456789","6")
     #check the method
-        value = my_manager.get_vaccine_date(file_test) # añadir date
-        self.assertEqual(value, "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+        value = my_manager.get_vaccine_date(file_test, date ) # añadir date
+        self.assertEqual(value, "5d8d6f4166b52464afc9e3c8a0caa81255e26c109c5d7dddc84615251f9c9341")
     #check store_date
         self.assertIsNotNone(file_store_date.find_item(value))
 
@@ -70,6 +71,7 @@ class TestGetVaccineDate(TestCase):
     def test_get_vaccine_date_no_ok_parameter(self):
         """tests no ok"""
         my_manager = VaccineManager()
+        date = "2023-04-06"
         # first , prepare my test , remove store patient
         file_store = PatientsJsonStore()
         file_store.delete_json_file()
@@ -86,7 +88,7 @@ class TestGetVaccineDate(TestCase):
 
                 # check the method
                 with self.assertRaises(VaccineManagementException) as c_m:
-                    my_manager.get_vaccine_date(file_test)
+                    my_manager.get_vaccine_date(file_test, date)
                 self.assertEqual(c_m.exception.message, expected_value)
 
                 # read the file again to compare
@@ -99,6 +101,7 @@ class TestGetVaccineDate(TestCase):
     def test_get_vaccine_date_no_ok(self):
         """# long 32 in patient system id , not valid"""
         file_test = JSON_FILES_RF2_PATH + "test_no_ok.json"
+        date = "2023-04-06"
         my_manager = VaccineManager()
         file_store_date = AppointmentsJsonStore()
 
@@ -107,7 +110,7 @@ class TestGetVaccineDate(TestCase):
 
         #check the method
         with self.assertRaises(VaccineManagementException) as c_m:
-            my_manager.get_vaccine_date(file_test)
+            my_manager.get_vaccine_date(file_test, date)
         self.assertEqual(c_m.exception.message, "patient system id is not valid")
 
         # read the file again to campare
@@ -118,6 +121,7 @@ class TestGetVaccineDate(TestCase):
     @freeze_time("2022-03-08")
     def test_get_vaccine_date_no_ok_no_quotes(self):
         """ no quotes , not valid """
+        date = "2023-04-06"
         file_test = JSON_FILES_RF2_PATH + "test_nok_no_comillas.json"
         my_manager = VaccineManager()
         file_store_date = AppointmentsJsonStore()
@@ -127,7 +131,7 @@ class TestGetVaccineDate(TestCase):
 
     #check the method
         with self.assertRaises(VaccineManagementException) as c_m:
-            my_manager.get_vaccine_date(file_test)
+            my_manager.get_vaccine_date(file_test, date)
         self.assertEqual(c_m.exception.message, "JSON Decode Error - Wrong JSON Format")
 
     #read the file again to campare
@@ -139,6 +143,7 @@ class TestGetVaccineDate(TestCase):
     @freeze_time("2022-03-08")
     def test_get_vaccine_date_no_ok_data_manipulated( self ):
         """ no quotes , not valid """
+        date = "2023-04-06"
         file_test = JSON_FILES_RF2_PATH + "test_ok.json"
         my_manager = VaccineManager()
         file_store = JSON_FILES_PATH + "store_patient.json"
@@ -165,7 +170,7 @@ class TestGetVaccineDate(TestCase):
 
         exception_message = "Exception not raised"
         try:
-            my_manager.get_vaccine_date(file_test)
+            my_manager.get_vaccine_date(file_test, date)
         #pylint: disable=broad-except
         except Exception as exception_raised:
             exception_message = exception_raised.__str__()

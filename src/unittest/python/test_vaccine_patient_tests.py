@@ -14,7 +14,7 @@ class TestVaccinePatient(TestCase):
     @freeze_time("2022-03-08")
     def setUp(self):
         """first prepare the stores"""
-
+        date = "2023-04-06"
         file_store_patient = PatientsJsonStore()
         file_store_date = AppointmentsJsonStore()
 
@@ -26,14 +26,14 @@ class TestVaccinePatient(TestCase):
         my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
                                           "minombre tienelalongitudmaxima", "Regular",
                                           "+34123456789", "6")
-        my_manager.get_vaccine_date(file_test)
+        my_manager.get_vaccine_date(file_test, date)
 
         my_manager.request_vaccination_id("57c811e5-3f5a-4a89-bbb8-11c0464d53e6",
                                           "minombre tieneuncharmenosqmax", "Family",
                                           "+34333456789","7")
         file_test = JSON_FILES_RF2_PATH + "test_ok_2.json"
 
-        my_manager.get_vaccine_date(file_test)
+        my_manager.get_vaccine_date(file_test, date)
 
     @freeze_time("2022-03-18")
     def test_vaccine_patient_ok(self):
@@ -61,7 +61,7 @@ class TestVaccinePatient(TestCase):
 
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
-                "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+                "5d8d6f4166b52464afc9e3c8a0caa81255e26c109c5d7dddc84615251f9c9341")
         self.assertEqual(context_manager.exception.message, "Today is not the date")
         # read the file again to compare
         hash_new = file_store_vaccine.data_hash()
