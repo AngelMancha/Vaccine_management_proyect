@@ -122,6 +122,21 @@ class VaccinationAppointment():
             10)
         return new_appointment
 
+    def check_date(self, date):
+        """Checks that the date has the correct format and it has a correct value"""
+        # check that the date is isoformat
+        try:
+            datetime.fromisoformat(date)
+        except ValueError:
+            raise VaccineManagementException("Incorrect ISO format")
+
+        current_date = datetime.today().isoformat()
+        if date <= current_date:
+            raise VaccineManagementException("The date has to be greater than today")
+        else:
+            return True
+
+
     def is_valid_today( self ):
         """returns true if today is the appointment's date"""
         today = datetime.today().date()

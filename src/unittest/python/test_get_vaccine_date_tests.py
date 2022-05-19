@@ -49,7 +49,7 @@ class TestGetVaccineDate(TestCase):
         """test ok"""
         file_test = JSON_FILES_RF2_PATH + "test_ok.json"
         my_manager = VaccineManager()
-
+        #date = "2022-03-18"
     #first , prepare my test , remove store patient
         file_store = PatientsJsonStore()
         file_store.delete_json_file()
@@ -61,7 +61,7 @@ class TestGetVaccineDate(TestCase):
                                           "minombre tienelalongitudmaxima",
                                           "Regular","+34123456789","6")
     #check the method
-        value = my_manager.get_vaccine_date(file_test)
+        value = my_manager.get_vaccine_date(file_test) # añadir date
         self.assertEqual(value, "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
     #check store_date
         self.assertIsNotNone(file_store_date.find_item(value))

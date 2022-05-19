@@ -1,7 +1,7 @@
 """Module """
-
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.data.vaccination_appointment import VaccinationAppointment
+
 
 class VaccineManager:
     """Class for providing the methods for managing the vaccination process"""
@@ -28,8 +28,10 @@ class VaccineManager:
             my_patient.save_patient()
             return my_patient.patient_sys_id
 
-        def get_vaccine_date (self, input_file):
+        def get_vaccine_date (self, input_file, date):
             """Gets an appointment for a registered patient"""
+            # check the format of the date
+            VaccinationAppointment.check_date(date)
             my_sign= VaccinationAppointment.create_appointment_from_json_file(input_file)
             #save the date in store_date.json
             my_sign.save_appointment()
