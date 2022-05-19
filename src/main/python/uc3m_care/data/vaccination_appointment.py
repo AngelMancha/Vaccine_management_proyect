@@ -15,7 +15,7 @@ from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 class VaccinationAppointment():
     """Class representing an appointment  for the vaccination of a patient"""
 
-    def __init__( self, patient_sys_id, patient_phone_number, date):
+    def __init__(self, patient_sys_id, patient_phone_number, input_date):
         self.__alg = "SHA-256"
         self.__type = "DS"
         self.__patient_sys_id = PatientSystemId(patient_sys_id).value
@@ -28,7 +28,8 @@ class VaccinationAppointment():
 
         #timestamp is represneted in seconds.microseconds
         #age must be expressed in senconds to be added to the timestap
-        self.__appointment_date = datetime.timestamp(datetime.fromisoformat(date))
+        print("La fecha ", input_date)
+        self.__appointment_date = datetime.timestamp(datetime.fromisoformat(input_date))
         self.__date_signature = self.vaccination_signature
 
 
@@ -96,7 +97,7 @@ class VaccinationAppointment():
 
 
     @classmethod
-    def get_appointment_from_date_signature( cls, date_signature ):
+    def get_appointment_from_date_signature( cls, date_signature, date):
         """returns the vaccination appointment object for the date_signature received"""
         appointments_store = AppointmentsJsonStore()
         appointment_record = appointments_store.find_item(DateSignature(date_signature).value)
@@ -106,7 +107,7 @@ class VaccinationAppointment():
             datetime.fromtimestamp(appointment_record["_VaccinationAppointment__issued_at"]))
         freezer.start()
         appointment = cls(appointment_record["_VaccinationAppointment__patient_sys_id"],
-                          appointment_record["_VaccinationAppointment__phone_number"],10)
+                          appointment_record["_VaccinationAppointment__phone_number"],date)
         freezer.stop()
         return appointment
 

@@ -14,7 +14,7 @@ class TestVaccinePatient(TestCase):
     @freeze_time("2022-03-08")
     def setUp(self):
         """first prepare the stores"""
-        date = "2023-04-06"
+        date = "2022-03-18"
         file_store_patient = PatientsJsonStore()
         file_store_date = AppointmentsJsonStore()
 
@@ -38,19 +38,20 @@ class TestVaccinePatient(TestCase):
     @freeze_time("2022-03-18")
     def test_vaccine_patient_ok(self):
         """basic path , signature is found , and date = today"""
+        date = "2022-03-18"
         my_manager = VaccineManager()
-        value = my_manager.vaccine_patient\
-                ("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+        value = my_manager.vaccine_patient ("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c", date)
         self.assertTrue(value)
+
         vaccination_log = VaccinationJsonStore()
-        vaccination_entry = vaccination_log.find_item\
-            ("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+        vaccination_entry = vaccination_log.find_item ("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
         self.assertIsNotNone(vaccination_entry)
 
 
     @freeze_time("2022-04-18")
     def test_vaccine_patient_no_date(self):
         """path signature is found , and date is not today"""
+        date = "2022-03-18"
         file_store_vaccine = VaccinationJsonStore()
         file_store_vaccine.delete_json_file()
         my_manager = VaccineManager()
@@ -61,7 +62,7 @@ class TestVaccinePatient(TestCase):
 
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
-                "5d8d6f4166b52464afc9e3c8a0caa81255e26c109c5d7dddc84615251f9c9341")
+                "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c", date)
         self.assertEqual(context_manager.exception.message, "Today is not the date")
         # read the file again to compare
         hash_new = file_store_vaccine.data_hash()
@@ -71,13 +72,14 @@ class TestVaccinePatient(TestCase):
     @freeze_time("2022-03-18")
     def test_vaccine_patient_bad_date_signature(self):
         """path signature is not valid format , only 63 chars"""
+        date = "2022-03-18"
         file_store_vaccine = VaccinationJsonStore()
         my_manager = VaccineManager()
         # read the file  to compare
         hash_original = file_store_vaccine.data_hash()
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
-                "a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+                "a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c", date)
         self.assertEqual(context_manager.exception.message, "date_signature format is not valid")
         hash_new = file_store_vaccine.data_hash()
 
@@ -86,6 +88,7 @@ class TestVaccinePatient(TestCase):
     @freeze_time("2022-03-18")
     def test_vaccine_patient_not_found_date_signature(self):
         """path: signature is not found in store_date"""
+        date = "2022-03-18"
         file_store_vaccine = VaccinationJsonStore()
         my_manager = VaccineManager()
         # read the file  to compare
@@ -93,7 +96,7 @@ class TestVaccinePatient(TestCase):
 
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
-                "7a8403d8605804cf2534fd7885940f3c3d8ec60ba578bc158b5dc2b9fb68d524")
+                "7a8403d8605804cf2534fd7885940f3c3d8ec60ba578bc158b5dc2b9fb68d524", date)
         self.assertEqual(context_manager.exception.message, "date_signature is not found")
         # read the file again to compare
         hash_new = file_store_vaccine.data_hash()
@@ -104,22 +107,24 @@ class TestVaccinePatient(TestCase):
     @unittest.skip("This exception won't be raised after the refactoring process")
     def test_vaccine_patient_no_store_date(self):
         """path: store_date is not found, so remove store_date.json"""
+        date = "2022-03-18"
         file_store_date = AppointmentsJsonStore()
         file_store_date.delete_json_file()
         my_manager = VaccineManager()
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
-                "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+                "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c", date)
         self.assertEqual(context_manager.exception.message, "Store_date not found")
 
     @freeze_time("2022-03-18")
     def test_vaccine_patient_store_date_is_empty(self):
         """for testing: store_date is empty"""
+        date = "2022-03-18"
         #write a store_date empty
         file_store_date = AppointmentsJsonStore()
         file_store_date.empty_json_file()
         my_manager = VaccineManager()
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
-                "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+                "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c", date)
         self.assertEqual(context_manager.exception.message, "date_signature is not found")
