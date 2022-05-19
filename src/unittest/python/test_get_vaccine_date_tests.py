@@ -187,3 +187,48 @@ class TestGetVaccineDate(TestCase):
 
         self.assertEqual(exception_message, "Patient's data have been manipulated")
         self.assertEqual(hash_new, hash_original)
+
+    @freeze_time("2022-03-08")
+    def test_invalid_date_bvn1(self):
+        """# test for an input date smaller than the current date"""
+        file_test = JSON_FILES_RF2_PATH + "test_ok.json"
+        date = "2021-03-18"
+        my_manager = VaccineManager()
+        file_store_date = AppointmentsJsonStore()
+
+        # read the file to compare file content before and after method call
+        hash_original = file_store_date.data_hash()
+
+        #check the method
+        with self.assertRaises(VaccineManagementException) as c_m:
+            my_manager.get_vaccine_date(file_test, date)
+        self.assertEqual(c_m.exception.message, "The date has to be greater than today")
+
+        # read the file again to campare
+        hash_new = file_store_date.data_hash()
+
+        self.assertEqual(hash_new, hash_original)
+
+
+    @freeze_time("2022-03-08")
+    def test_invalid_date_ecnv2(self):
+        """# test for an input date smaller than the current date"""
+        file_test = JSON_FILES_RF2_PATH + "test_ok.json"
+        date = "2021/03/18"
+        my_manager = VaccineManager()
+        file_store_date = AppointmentsJsonStore()
+
+        # read the file to compare file content before and after method call
+        hash_original = file_store_date.data_hash()
+
+        #check the method
+        with self.assertRaises(VaccineManagementException) as c_m:
+            my_manager.get_vaccine_date(file_test, date)
+        self.assertEqual(c_m.exception.message, "Incorrect ISO format")
+
+        # read the file again to campare
+        hash_new = file_store_date.data_hash()
+
+        self.assertEqual(hash_new, hash_original)
+
+
