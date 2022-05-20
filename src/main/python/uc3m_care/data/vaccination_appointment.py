@@ -151,8 +151,7 @@ class VaccinationAppointment():
         else:
             return True
 
-    def cancelation_appointment(self, input_file):
-        file_cancel_date = JSON_FILES_PATH + "cancel_appointment.json"
+    def cancelation_appointment(self, file_cancel_date):
         # first read the file
         try:
             with open(file_cancel_date, "r", encoding="utf-8", newline="") as file:
@@ -183,6 +182,17 @@ class VaccinationAppointment():
                 if vaccination_date < today:
                     raise VaccineManagementException("The appointment has already passed")
                 today.stop()
+                if data_list["cancelation_type"] == "Final":
+                    reason = data_list["reason"]
+                    date_signature = data_list["date_signature"]
+                    self.save_store_cancel(date_signature, reason)
+                    store_date = []
+                    try:
+                        with open(file_store_date, "w", encoding="utf-8", newline="") as file:
+                            json.dump(store_date, file, indent=2)
+                    except FileNotFoundError as ex:
+                        raise VaccineManagementException("Wrong file or file path") from ex
+
         vaccination_date = datetime.fromtimestamp(vaccination_date).isoformat()
         if not found:
             raise VaccineManagementException("Appointment not found")
@@ -192,6 +202,28 @@ class VaccinationAppointment():
             raise VaccineManagementException("The vaccine has already been administered")
         return date_signature
 
+
+    def save_store_cancel(self, date_signature, reason):
+        file_store_cancelation = JSON_FILES_PATH + "final_cancel.json"
+        # first read the file
+        try:
+            with open(file_store_cancelation, "r", encoding="utf-8", newline="") as file:
+                data_list = json.load(file)
+        except FileNotFoundError:
+            # file is not found , so  init my data_list
+            data_list = []
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+
+        # append the date
+        data_list.append(date_signature.__str__())
+        data_list.append(reason.__str__())
+        try:
+            with open(file_store_cancelation, "w", encoding="utf-8", newline="") as file:
+                json.dump(data_list, file, indent=2)
+        except FileNotFoundError as ex:
+            raise VaccineManagementException("Wrong file or file path") from ex
+        return True
 
     def is_valid_today( self ):
         """returns true if today is the appointment's date"""
