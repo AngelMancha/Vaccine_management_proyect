@@ -192,7 +192,10 @@ class VaccinationAppointment():
                     #delete the whole item (cancel the appointment)
                     store_date.remove(item)
                 if data_list["cancelation_type"] == "Temporal":
-                    store_date["_VaccinationAppointment__appointment_date"] = "Canceled"
+                    item["Cancelation"] = "CONFIRMED"
+
+
+
 
         vaccination_date = datetime.fromtimestamp(vaccination_date).isoformat()
         print("HOLAAAAAAAA")
@@ -202,11 +205,6 @@ class VaccinationAppointment():
 
         date_signature = data_list["date_signature"]
 
-        """
-        boolean = VaccineManager.vaccine_patient(date_signature, vaccination_date)
-        if boolean:
-            raise VaccineManagementException("The vaccine has already been administered")
-        """
         return date_signature, vaccination_date
 
 
