@@ -8,7 +8,7 @@ from uc3m_care import VaccineManagementException
 from uc3m_care import JSON_FILES_PATH
 from uc3m_care import AppointmentsJsonStore
 from uc3m_care import PatientsJsonStore
-from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_RF3_PATH
+from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_RF3_PATH, JSON_FILES_RF2_PATH
 
 param_list_nok = [("test_dup_all.json", "JSON Decode Error - Wrong JSON Format"),
                   ("test_dup_char_plus.json", "phone number is not valid"),
@@ -49,23 +49,11 @@ class TestCncelAppointment(TestCase):
     def test_cancel_vaccine_ok(self):
         """test ok"""
         file_test = JSON_FILES_RF3_PATH + "cancel_appointment_ok.json"
-        my_manager = VaccineManager()
-        date = "2022-03-18"
-        # first , prepare my test , remove store patient
-        file_store = PatientsJsonStore()
-        file_store.delete_json_file()
-        file_store_date = AppointmentsJsonStore()
-        file_store_date.delete_json_file()
 
-        # add a patient in the store
-        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
-                                          "minombre tienelalongitudmaxima",
-                                          "Regular", "+34123456789", "6")
-        # check the method
+        my_manager = VaccineManager()
         value = my_manager.cancel_appointment(file_test)
         self.assertEqual(value, "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        # check store_date
-        self.assertIsNotNone(file_store_date.find_item(value))
+
 
     @freeze_time("2022-03-08")
     def test_get_vaccine_date_no_ok_data_manipulated(self):

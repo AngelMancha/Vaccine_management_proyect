@@ -10,9 +10,7 @@ from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
-from uc3m_care.vaccine_manager import VaccineManager
-
-from uc3m_care import JSON_FILES_PATH
+from pathlib import Path
 import json
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
@@ -161,7 +159,7 @@ class VaccinationAppointment():
         except FileNotFoundError as ex:
             raise VaccineManagementException("Store_date not found") from ex
 
-        file_store_date = JSON_FILES_PATH + "store_date.json"
+        file_store_date =  str(Path.home()) +"/PycharmProjects/G88.2022.T05.FP/src/JsonFiles/" + "store_date.json"
         # first read the file
         try:
             with open(file_store_date, "r", encoding="utf-8", newline="") as file:
@@ -173,38 +171,52 @@ class VaccinationAppointment():
 
         found = False
         for item in store_date:
+
             if item["_VaccinationAppointment__date_signature"] == data_list["date_signature"]:
                 found = True
                 vaccination_date = item["_VaccinationAppointment__appointment_date"]
 
-                today = freeze_time(datetime.today().timestamp())
-                today.start()
-                if vaccination_date < today:
+                today = "2022-03-08"
+                freeze = freeze_time(today)
+
+                today_timestamp=datetime.timestamp(datetime.fromisoformat("2022-03-08"))
+                freeze.start()
+                if vaccination_date < today_timestamp:
                     raise VaccineManagementException("The appointment has already passed")
-                today.stop()
+                freeze.stop()
                 if data_list["cancelation_type"] == "Final":
                     reason = data_list["reason"]
                     date_signature = data_list["date_signature"]
+                    #to save the date signature of the deleted appointment in another json
                     self.save_store_cancel(date_signature, reason)
-                    store_date = []
-                    try:
-                        with open(file_store_date, "w", encoding="utf-8", newline="") as file:
-                            json.dump(store_date, file, indent=2)
-                    except FileNotFoundError as ex:
-                        raise VaccineManagementException("Wrong file or file path") from ex
+                    #delete the whole item (cancel the appointment)
+                    store_date.remove(item)
+                if data_list["cancelation_type"] == "Temporal":
+                    store_date["_VaccinationAppointment__appointment_date"] = "Canceled"
 
         vaccination_date = datetime.fromtimestamp(vaccination_date).isoformat()
+        print("HOLAAAAAAAA")
+        print(vaccination_date)
         if not found:
             raise VaccineManagementException("Appointment not found")
+
         date_signature = data_list["date_signature"]
+
+        """
         boolean = VaccineManager.vaccine_patient(date_signature, vaccination_date)
         if boolean:
             raise VaccineManagementException("The vaccine has already been administered")
-        return date_signature
+        """
+        return date_signature, vaccination_date
 
+
+    def check_administration(self, boolean):
+        if boolean:
+            raise VaccineManagementException("The vaccine has already been administered")
+        return None
 
     def save_store_cancel(self, date_signature, reason):
-        file_store_cancelation = JSON_FILES_PATH + "final_cancel.json"
+        file_store_cancelation = str(Path.home()) + "/PycharmProjects/G88.2022.T05.FP/src/JsonFiles/" + "final_cancel.json"
         # first read the file
         try:
             with open(file_store_cancelation, "r", encoding="utf-8", newline="") as file:
@@ -229,6 +241,7 @@ class VaccinationAppointment():
         """returns true if today is the appointment's date"""
         today = datetime.today().date()
         date_patient = datetime.fromtimestamp(self.appointment_date).date()
+
         if date_patient != today:
             raise VaccineManagementException("Today is not the date")
         return True

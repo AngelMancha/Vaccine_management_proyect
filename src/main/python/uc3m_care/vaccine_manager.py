@@ -42,13 +42,20 @@ class VaccineManager:
         def vaccine_patient(self, date_signature, date):
             """Register the vaccination of the patient"""
             appointment = VaccinationAppointment.get_appointment_from_date_signature(date_signature, date)
+
             return appointment.register_vaccination()
 
         def cancel_appointment(self, input_file):
             """Returns a string that represent the date_signature of the appointment canceled or
             a VaccineManagementException"""
-            date_signature = VaccinationAppointment.cancelation_appointment(input_file)
-            return None
+            patient_system_id="72b72255619afeed8bd26861a2bc2caf"
+            patient_phone_number="+34123456789"
+            input_date = "2022-03-18"
+
+            date_signature_date = VaccinationAppointment.cancelation_appointment(VaccinationAppointment(patient_system_id, patient_phone_number,input_date), input_file)
+            #boolean = self.vaccine_patient(date_signature_date[0], date_signature_date[1])
+            #VaccinationAppointment.check_administration(VaccinationAppointment(patient_system_id, patient_phone_number,input_date),boolean)
+            return date_signature_date[0]
 
 
     instance = None
