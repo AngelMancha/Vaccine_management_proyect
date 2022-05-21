@@ -10,23 +10,25 @@ from uc3m_care import AppointmentsJsonStore
 from uc3m_care import PatientsJsonStore
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_RF3_PATH, JSON_FILES_RF2_PATH
 
-param_list_nok = [("test_dup_all.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_char_plus.json", "phone number is not valid"),
-                  ("test_dup_colon.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_comillas.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_comma.json", "JSON Decode Error - Wrong JSON Format"),
+param_list_nok = [("test_dup_all.json", "JSON Decode Error - Wrong JSON Format"), # bien
                   ("test_dup_content.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_data1.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_data1_content.json", "patient system id is not valid"),
-                  ("test_dup_data2.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_data2_content.json", "phone number is not valid"),
-                  ("test_dup_field1.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_field2.json", "JSON Decode Error - Wrong JSON Format"),
+
+                  ("test_dup_date_sig.json", "JSON Decode Error - Wrong JSON Format"),
                   ("test_dup_final_bracket.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_initial_bracket.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_label1.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_label1_content.json", "Bad label patient_id"),
-                  ("test_dup_label2.json", "JSON Decode Error - Wrong JSON Format"),
+                  ("test_dup_final_quote.json", "JSON Decode Error - Wrong JSON Format"),
+                  ("test_dup_hex.json", "patient system id is not valid"),
+                  ("test_dup_init_quote.json", "JSON Decode Error - Wrong JSON Format"),
+                  ("test_dup_initial_bracket.json", "phone number is not valid"),
+                  ("test_dup_rea.json", "JSON Decode Error - Wrong JSON Format"),
+                  ("test_dup_rn.json", "JSON Decode Error - Wrong JSON Format"),
+                  ("test_dup_sep1.json", "JSON Decode Error - Wrong JSON Format"),
+                  ("test_dup_sep2.json", "JSON Decode Error - Wrong JSON Format"),
+                  ("test_dup_sep_2.json", "JSON Decode Error - Wrong JSON Format"),
+                  ("test_dup_value_d1.json", "Bad label patient_id"),
+                  ("test_dup_value_d2.json", "JSON Decode Error - Wrong JSON Format"),
+
+
+                  # continuar aqui
                   ("test_dup_label2_content.json", "Bad label contact phone"),
                   ("test_dup_phone.json", "phone number is not valid"),
                   ("test_empty.json", "Bad label patient_id"),
@@ -42,22 +44,35 @@ param_list_nok = [("test_dup_all.json", "JSON Decode Error - Wrong JSON Format")
                   ("test_no_phone.json", "phone number is not valid")
                   ]
 
-
+# ("test_dup_cn.json", "phone number is not valid"),
+# ("test_dup_ct.json", "JSON Decode Error - Wrong JSON Format"),
 class TestCncelAppointment(TestCase):
     """Class for testing the cancel_vaccine method"""
     @freeze_time("2022-03-08")
     def test_cancel_vaccine_ok(self):
         """test ok"""
-        file_test = JSON_FILES_RF3_PATH + "cancel_appointment_ok.json"
-
+        file_test_cancel = JSON_FILES_RF3_PATH + "cancel_appointment_ok.json"
+        file_test = JSON_FILES_RF2_PATH + "test_ok.json"
         my_manager = VaccineManager()
-        value = my_manager.cancel_appointment(file_test)
+        # date = "2023-04-06"
+        date = "2022-03-18"
+        # first , prepare my test , remove store patient
+        file_store = PatientsJsonStore()
+        file_store.delete_json_file()
+        file_store_date = AppointmentsJsonStore()
+        file_store_date.delete_json_file()
+
+        # add a patient in the store
+        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                          "minombre tienelalongitudmaxima",
+                                          "Regular", "+34123456789", "6")
+        # check the method
+        my_manager.get_vaccine_date(file_test, date)  # añadir date
+        value = my_manager.cancel_appointment(file_test_cancel)
         self.assertEqual(value, "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
 
 
-
     def test_cancel_vaccine_no_ok_not_exist(self):
-
         file_test = JSON_FILES_RF3_PATH + "cancel_appointment_not_exist.json"
         my_manager = VaccineManager()
         with self.assertRaises(VaccineManagementException) as c_m:
@@ -75,12 +90,13 @@ class TestCncelAppointment(TestCase):
     @freeze_time("2022-03-08")
     def test_cancel_vaccine_no_ok_canceled(self):
         file_test = JSON_FILES_RF3_PATH + "cancel_appointment_ok.json"
+        self.test_cancel_vaccine_ok()
         my_manager = VaccineManager()
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.cancel_appointment(file_test)
         self.assertEqual(c_m.exception.message, "This appointment is already canceled")
 
-    """
+
     @freeze_time("2022-03-08")
     def test_get_vaccine_date_no_ok_data_manipulated(self):
       
@@ -128,6 +144,6 @@ class TestCncelAppointment(TestCase):
 
         self.assertEqual(exception_message, "Patient's data have been manipulated")
         self.assertEqual(hash_new, hash_original)
-        """
+
 
 
