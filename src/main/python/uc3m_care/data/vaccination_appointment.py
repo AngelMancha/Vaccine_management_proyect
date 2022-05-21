@@ -170,7 +170,6 @@ class VaccinationAppointment():
 
         found = False
         for item in store_date:
-
             if item["_VaccinationAppointment__date_signature"] == data_list["date_signature"]:
                 found = True
                 vaccination_date = item["_VaccinationAppointment__appointment_date"]
@@ -196,7 +195,7 @@ class VaccinationAppointment():
                     b_file.close()
 
                 if data_list["cancelation_type"] == "Temporal":
-                    #we check if the lenght of the dictionary is greater than 8, which would mean that the key Cancelation has been added previously
+                    #we check if the length of the dictionary is greater than 8, which would mean that the key Cancelation has been added previously
                     if len(item) > 8:
                         raise VaccineManagementException("This appointment is already canceled")
                     item["Cancelation"] = "CONFIRMED"
@@ -205,6 +204,16 @@ class VaccinationAppointment():
                     a_file.close()
 
         #vaccination_date = datetime.fromtimestamp(vaccination_date).isoformat()
+
+                if len(data_list["date_signature"]) != 64:
+                    raise VaccineManagementException("Wrong JSON")
+
+                if len(data_list["reason"] == 0) or len(data_list["reason"]) > 100:
+                    raise VaccineManagementException("Wrong JSON")
+
+                else:
+                    raise VaccineManagementException("Wrong JSON")
+
         date_signature = data_list["date_signature"]
         if not found:
             #we check if the date signature has been cancelled

@@ -36,12 +36,20 @@ param_list_nok = [("test_dup_all.json", "JSON Decode Error - Wrong JSON Format")
                   ("test_no_value_d2.json", "Store_date not found")
                   ]
 
-# ("test_dup_cn.json", "phone number is not valid"),
-# ("test_dup_ct.json", "JSON Decode Error - Wrong JSON Format"),
-# test dup ds
-# ("test_dup_hex.json", "patient system id is not valid"),
-# ("test_dup_rea.json", "JSON Decode Error - Wrong JSON Format"),
-# ("test_dup_rn.json", "JSON Decode Error - Wrong JSON Format"),
+mod_json_nok = [("test_dup_cn.json", "Wrong JSON"),
+                ("test_dup_hex.json", "Wrong JSON"),
+                ("test_dup_rea.json", "Wrong JSON"),
+                ("test_dup_rn.json", "Wrong JSON"),
+                ("test_mod_cn.json", "Wrong JSON"),
+                ("test_mod_hex.json", "Wrong JSON"),
+                ("test_mod_rea.json", "JWrong JSON"),
+                ("test_reason_more100.json", "JWrong JSON"),
+                ("test_mod_rn.json", "Wrong JSON"),
+                ("test_no_cn.json", "Wrong JSON"),
+                ("test_no_hex.json", "Wrong JSON"),
+                ("test_no_rea.json", "Wrong JSON"),
+                ("test_no_rn.json", "Wrong JSON")
+                ]
 
 class TestCncelAppointment(TestCase):
     """Class for testing the cancel_vaccine method"""
@@ -68,8 +76,8 @@ class TestCncelAppointment(TestCase):
         value = my_manager.cancel_appointment(file_test_cancel)
         self.assertEqual(value, "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
 
-
     def test_cancel_vaccine_no_ok_not_exist(self):
+        """test for appointment has not been found"""
         file_test = JSON_FILES_RF3_PATH + "cancel_appointment_not_exist.json"
         my_manager = VaccineManager()
         with self.assertRaises(VaccineManagementException) as c_m:
@@ -119,6 +127,26 @@ class TestCncelAppointment(TestCase):
                 self.assertEqual(c_m.exception.message, expected_value)
 
 
+    @freeze_time("2022-03-08")
+    def test_get_vaccine_date_no_ok_json(self):
+        """tests no ok"""
+        my_manager = VaccineManager()
+        date = "2022-03-18"
+        # first , prepare my test , remove store patient
+        file_store = PatientsJsonStore()
+        file_store.delete_json_file()
+        file_store_date = AppointmentsJsonStore()
+        file_store_date.delete_json_file()
+        # add a patient in the store
+        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                          "minombre tienelalongitudmaxima",
+                                          "Regular", "+34123456789", "6")
 
-
-
+        for file_name, expected_value in param_list_nok:
+            with self.subTest(test=file_name):
+                file_test = JSON_FILES_RF2_PATH + file_name
+                hash_original = file_store_date.data_hash()
+                # check the method
+                with self.assertRaises(VaccineManagementException) as c_m:
+                    my_manager.cancel_appointment(file_test)
+                self.assertEqual(c_m.exception.message, expected_value)
