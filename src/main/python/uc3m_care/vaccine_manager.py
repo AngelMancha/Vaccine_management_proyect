@@ -55,7 +55,7 @@ class VaccineManager:
             date_signature_date = VaccinationAppointment.cancelation_appointment(VaccinationAppointment(patient_system_id, patient_phone_number,input_date), input_file)
             #boolean = self.vaccine_patient(date_signature_date[0], date_signature_date[1])
             #VaccinationAppointment.check_administration(VaccinationAppointment(patient_system_id, patient_phone_number,input_date),boolean)
-            return date_signature_date[0]
+            return date_signature_date
 
 
     instance = None

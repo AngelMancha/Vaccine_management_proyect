@@ -191,21 +191,25 @@ class VaccinationAppointment():
                     self.save_store_cancel(date_signature, reason)
                     #delete the whole item (cancel the appointment)
                     store_date.remove(item)
+                    b_file = open(file_store_date, "w")
+                    json.dump(store_date, b_file)
+                    b_file.close()
+
                 if data_list["cancelation_type"] == "Temporal":
+                    #we check if the lenght of the dictionary is greater than 8, which would mean that the key Cancelation has been added previously
+                    if len(item) > 8:
+                        raise VaccineManagementException("This appointment is already canceled ")
                     item["Cancelation"] = "CONFIRMED"
+                    a_file = open(file_store_date, "w")
+                    json.dump(store_date, a_file)
+                    a_file.close()
 
-
-
-
-        vaccination_date = datetime.fromtimestamp(vaccination_date).isoformat()
-        print("HOLAAAAAAAA")
-        print(vaccination_date)
-        if not found:
-            raise VaccineManagementException("Appointment not found")
-
+        #vaccination_date = datetime.fromtimestamp(vaccination_date).isoformat()
         date_signature = data_list["date_signature"]
+        if not found:
+                raise VaccineManagementException("Appointment not found")
 
-        return date_signature, vaccination_date
+        return date_signature
 
 
     def check_administration(self, boolean):
