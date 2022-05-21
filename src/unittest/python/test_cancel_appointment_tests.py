@@ -54,6 +54,32 @@ class TestCncelAppointment(TestCase):
         value = my_manager.cancel_appointment(file_test)
         self.assertEqual(value, "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
 
+
+
+    def test_cancel_vaccine_no_ok_not_exist(self):
+
+        file_test = JSON_FILES_RF3_PATH + "cancel_appointment_not_exist.json"
+        my_manager = VaccineManager()
+        with self.assertRaises(VaccineManagementException) as c_m:
+            my_manager.cancel_appointment(file_test)
+        self.assertEqual(c_m.exception.message, "Appointment not found")
+
+    @freeze_time("2023-03-08")
+    def test_cancel_vaccine_no_ok_passed(self):
+        file_test = JSON_FILES_RF3_PATH + "cancel_appointment_passed.json"
+        my_manager = VaccineManager()
+        with self.assertRaises(VaccineManagementException) as c_m:
+            my_manager.cancel_appointment(file_test)
+        self.assertEqual(c_m.exception.message, "The appointment has already passed")
+
+    @freeze_time("2022-03-08")
+    def test_cancel_vaccine_no_ok_canceled(self):
+        file_test = JSON_FILES_RF3_PATH + "cancel_appointment_ok.json"
+        my_manager = VaccineManager()
+        with self.assertRaises(VaccineManagementException) as c_m:
+            my_manager.cancel_appointment(file_test)
+        self.assertEqual(c_m.exception.message, "This appointment is already canceled")
+
     """
     @freeze_time("2022-03-08")
     def test_get_vaccine_date_no_ok_data_manipulated(self):

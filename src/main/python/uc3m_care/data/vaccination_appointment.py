@@ -179,7 +179,9 @@ class VaccinationAppointment():
                 today = "2022-03-08"
                 freeze = freeze_time(today)
 
-                today_timestamp=datetime.timestamp(datetime.fromisoformat("2022-03-08"))
+                #today_timestamp=datetime.timestamp(datetime.fromisoformat("2022-03-08"))
+                today_timestamp = datetime.timestamp(datetime.today())
+                print("TODAY", today_timestamp)
                 freeze.start()
                 if vaccination_date < today_timestamp:
                     raise VaccineManagementException("The appointment has already passed")
@@ -198,7 +200,7 @@ class VaccinationAppointment():
                 if data_list["cancelation_type"] == "Temporal":
                     #we check if the lenght of the dictionary is greater than 8, which would mean that the key Cancelation has been added previously
                     if len(item) > 8:
-                        raise VaccineManagementException("This appointment is already canceled ")
+                        raise VaccineManagementException("This appointment is already canceled")
                     item["Cancelation"] = "CONFIRMED"
                     a_file = open(file_store_date, "w")
                     json.dump(store_date, a_file)
@@ -207,6 +209,22 @@ class VaccinationAppointment():
         #vaccination_date = datetime.fromtimestamp(vaccination_date).isoformat()
         date_signature = data_list["date_signature"]
         if not found:
+            #we check if the date signature has been cancelled
+            file_store_cancelation = str(
+                Path.home()) + "/PycharmProjects/G88.2022.T05.FP/src/JsonFiles/" + "final_cancel.json"
+            # first read the file
+            try:
+                with open(file_store_cancelation, "r", encoding="utf-8", newline="") as file:
+                    data_list = json.load(file)
+            except FileNotFoundError:
+                # file is not found , so  init my data_list
+                data_list = []
+            except json.JSONDecodeError as ex:
+                raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+
+            if date_signature in data_list:
+                raise VaccineManagementException("This appointment is already canceled ")
+            else:
                 raise VaccineManagementException("Appointment not found")
 
         return date_signature
