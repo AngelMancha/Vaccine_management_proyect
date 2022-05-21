@@ -31,7 +31,6 @@ class VaccinationAppointment():
 
         #timestamp is represneted in seconds.microseconds
         #age must be expressed in senconds to be added to the timestap
-        print("La fecha ", input_date)
         self.__appointment_date = datetime.timestamp(datetime.fromisoformat(input_date))
         self.__date_signature = self.vaccination_signature
 
@@ -181,7 +180,6 @@ class VaccinationAppointment():
 
                 #today_timestamp=datetime.timestamp(datetime.fromisoformat("2022-03-08"))
                 today_timestamp = datetime.timestamp(datetime.today())
-                print("TODAY", today_timestamp)
                 freeze.start()
                 if vaccination_date < today_timestamp:
                     raise VaccineManagementException("The appointment has already passed")
