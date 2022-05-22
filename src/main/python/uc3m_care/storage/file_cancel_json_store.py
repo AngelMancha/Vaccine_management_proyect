@@ -16,6 +16,7 @@ class CancelationJsonStore():
             super().add_item(item)
 
     instance = None
+
     def __new__ ( cls ):
         if not CancelationJsonStore.instance:
             CancelationJsonStore.instance = CancelationJsonStore.__CancelationJsonStore()

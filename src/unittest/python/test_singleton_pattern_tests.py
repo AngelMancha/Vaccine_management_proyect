@@ -4,6 +4,7 @@ import unittest
 from uc3m_care import VaccineManager
 from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore
 from uc3m_care.storage.patients_json_store import PatientsJsonStore
+from uc3m_care.storage.file_cancel_json_store import CancelationJsonStore
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 
 class MyTestCase(unittest.TestCase):
@@ -51,6 +52,18 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(id(vm1), id(vm2))
         self.assertEqual(id(vm1), id(vm3))
         self.assertEqual(id(vm1), id(vm4))
+
+    def test_cancelation_store_singleton ( self ):
+        """testing singleton for VaccinationJsonStore"""
+        vm1 = CancelationJsonStore()
+        vm2 = CancelationJsonStore()
+        vm3 = CancelationJsonStore()
+        vm4 = CancelationJsonStore()
+
+        self.assertEqual(id(vm1), id(vm2))
+        self.assertEqual(id(vm1), id(vm3))
+        self.assertEqual(id(vm1), id(vm4))
+
 
 if __name__ == '__main__':
     unittest.main()
