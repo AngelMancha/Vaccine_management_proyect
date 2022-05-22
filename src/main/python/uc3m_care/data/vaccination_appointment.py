@@ -128,7 +128,8 @@ class VaccinationAppointment():
         appointment_parser = AppointmentJsonParser(json_file)
 
         new_appointment = cls(
-            appointment_parser.json_content[appointment_parser.PATIENT_SYSTEM_ID_KEY], appointment_parser.json_content[appointment_parser.CONTACT_PHONE_NUMBER_KEY], date)
+            appointment_parser.json_content[appointment_parser.PATIENT_SYSTEM_ID_KEY],
+            appointment_parser.json_content[appointment_parser.CONTACT_PHONE_NUMBER_KEY], date)
 
         return new_appointment
 
@@ -143,7 +144,10 @@ class VaccinationAppointment():
 
 
     def save_store_cancel(self, date_signature, reason):
-        file_store_cancelation = str(Path.home()) + "/PycharmProjects/G88.2022.T05.FP/src/JsonFiles/" + "final_cancel.json"
+        """this method saves the information of the canceled appoinment in final_cancel json"""
+        file_store_cancelation = str(Path.home()) + \
+                                 "/PycharmProjects/G88.2022.T05.FP/src/JsonFiles/" \
+                                 + "final_cancel.json"
         # first read the file
         try:
             with open(file_store_cancelation, "r", encoding="utf-8", newline="") as file:

@@ -1,11 +1,8 @@
 """Tests for get_vaccine_date method"""
 from unittest import TestCase
-import os
-import shutil
 from freezegun import freeze_time
 from uc3m_care import VaccineManager
 from uc3m_care import VaccineManagementException
-from uc3m_care import JSON_FILES_PATH
 from uc3m_care import AppointmentsJsonStore
 from uc3m_care import PatientsJsonStore
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_RF3_PATH, JSON_FILES_RF2_PATH
@@ -133,7 +130,7 @@ class TestCncelAppointment(TestCase):
 
     @freeze_time("2023-03-08")
     def test_cancel_vaccine_no_ok_passed(self):
-        file_test = JSON_FILES_RF3_PATH + "cancel_appointment_ok.json"
+        """test to check the validity of the date"""
         self.test_cancel_vaccine_ok() # call this method to cancel the appointment
         file_test_passed = JSON_FILES_RF3_PATH + "cancel_appointment_passed.json"
         my_manager = VaccineManager()
@@ -143,6 +140,7 @@ class TestCncelAppointment(TestCase):
 
     @freeze_time("2022-03-08")
     def test_cancel_vaccine_no_ok_canceled(self):
+        """test that checks if the appointmetn is already canceled"""
         file_test = JSON_FILES_RF3_PATH + "cancel_appointment_ok.json"
         self.test_cancel_vaccine_ok() # call this method to cancel the appointment
         my_manager = VaccineManager()
@@ -155,7 +153,6 @@ class TestCncelAppointment(TestCase):
     def test_cancel_vaccine_no_ok_parameter(self):
         """tests no ok"""
         my_manager = VaccineManager()
-        date = "2022-03-18"
         # first , prepare my test , remove store patient
         file_store = PatientsJsonStore()
         file_store.delete_json_file()
@@ -169,7 +166,7 @@ class TestCncelAppointment(TestCase):
         for file_name, expected_value in param_list_nok:
             with self.subTest(test=file_name):
                 file_test = JSON_FILES_RF2_PATH + file_name
-                hash_original = file_store_date.data_hash()
+                file_store_date.data_hash()
                 # check the method
                 with self.assertRaises(VaccineManagementException) as c_m:
                     my_manager.cancel_appointment(file_test)
@@ -180,7 +177,6 @@ class TestCncelAppointment(TestCase):
     def test_cancel_vaccine_no_ok_json(self):
         """tests no ok"""
         my_manager = VaccineManager()
-        date = "2022-03-18"
         # first , prepare my test , remove store patient
         file_store = PatientsJsonStore()
         file_store.delete_json_file()
@@ -194,7 +190,7 @@ class TestCncelAppointment(TestCase):
         for file_name, expected_value in param_list_nok:
             with self.subTest(test=file_name):
                 file_test = JSON_FILES_RF2_PATH + file_name
-                hash_original = file_store_date.data_hash()
+                file_store_date.data_hash()
                 # check the method
                 with self.assertRaises(VaccineManagementException) as c_m:
                     my_manager.cancel_appointment(file_test)
@@ -204,7 +200,6 @@ class TestCncelAppointment(TestCase):
     def test_cancel_vaccine_wrong_value(self):
         """tests no ok"""
         my_manager = VaccineManager()
-        date = "2022-03-18"
         # first , prepare my test , remove store patient
         file_store = PatientsJsonStore()
         file_store.delete_json_file()
@@ -218,9 +213,8 @@ class TestCncelAppointment(TestCase):
         for file_name, expected_value in param_nok:
             with self.subTest(test=file_name):
                 file_test = JSON_FILES_RF3_PATH + file_name
-                hash_original = file_store_date.data_hash()
+                file_store_date.data_hash()
                 # check the method
                 with self.assertRaises(VaccineManagementException) as c_m:
                     my_manager.cancel_appointment(file_test)
                 self.assertEqual(c_m.exception.message, expected_value)
-

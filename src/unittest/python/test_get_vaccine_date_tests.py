@@ -8,7 +8,6 @@ from uc3m_care import VaccineManagementException
 from uc3m_care import JSON_FILES_PATH, JSON_FILES_RF2_PATH
 from uc3m_care import AppointmentsJsonStore
 from uc3m_care import PatientsJsonStore
-from datetime import datetime
 
 param_list_nok = [("test_dup_all.json","JSON Decode Error - Wrong JSON Format"),
                     ("test_dup_char_plus.json","phone number is not valid"),
@@ -230,5 +229,3 @@ class TestGetVaccineDate(TestCase):
         hash_new = file_store_date.data_hash()
 
         self.assertEqual(hash_new, hash_original)
-
-
