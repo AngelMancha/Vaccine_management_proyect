@@ -52,6 +52,19 @@ mod_json_nok = [("test_dup_cn.json", "Wrong JSON"),
                 ("test_no_rn.json", "Wrong JSON")
                 ]
 
+param_nok = [("test_reason_more_100.json", "Bad label reason"),
+             ("test_dup_ct.json", "Bad label cancelation type"),
+             ("test_dup_dsig.json", "Bad label date signature"),
+             ("test_dup_rea.json", "Bad label reason"),
+             ("test_no_hex.json", "date_signature is not found"),
+             ("test_no_cn.json", "Vaccination has already been canceled"),
+             ("test_no_rn.json", "Vaccination has already been canceled"),
+             ("test_mod_dsig.json", "Bad label date signature"),
+             ("test_mod_rea.json", "Bad label reason"),
+             ("test_mod_ct.json", "Bad label cancelation type"),
+             ("test_mod_hex.json", "date_signature is not found"),
+             ("test_mod_rn.json", "Vaccination has already been canceled")]
+
 class TestCncelAppointment(TestCase):
     """Class for testing the cancel_vaccine method"""
     @freeze_time("2022-03-08")
@@ -139,7 +152,7 @@ class TestCncelAppointment(TestCase):
 
 
     @freeze_time("2022-03-08")
-    def test_get_vaccine_date_no_ok_parameter(self):
+    def test_cancel_vaccine_no_ok_parameter(self):
         """tests no ok"""
         my_manager = VaccineManager()
         date = "2022-03-18"
@@ -164,7 +177,7 @@ class TestCncelAppointment(TestCase):
 
 
     @freeze_time("2022-03-08")
-    def test_get_vaccine_date_no_ok_json(self):
+    def test_cancel_vaccine_no_ok_json(self):
         """tests no ok"""
         my_manager = VaccineManager()
         date = "2022-03-18"
@@ -186,3 +199,28 @@ class TestCncelAppointment(TestCase):
                 with self.assertRaises(VaccineManagementException) as c_m:
                     my_manager.cancel_appointment(file_test)
                 self.assertEqual(c_m.exception.message, expected_value)
+
+    @freeze_time("2022-03-08")
+    def test_cancel_vaccine_wrong_value(self):
+        """tests no ok"""
+        my_manager = VaccineManager()
+        date = "2022-03-18"
+        # first , prepare my test , remove store patient
+        file_store = PatientsJsonStore()
+        file_store.delete_json_file()
+        file_store_date = AppointmentsJsonStore()
+        file_store_date.delete_json_file()
+        # add a patient in the store
+        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                          "minombre tienelalongitudmaxima",
+                                          "Regular", "+34123456789", "6")
+        self.test_cancel_vaccine_ok()  # call this method to cancel the appointment
+        for file_name, expected_value in param_nok:
+            with self.subTest(test=file_name):
+                file_test = JSON_FILES_RF3_PATH + file_name
+                hash_original = file_store_date.data_hash()
+                # check the method
+                with self.assertRaises(VaccineManagementException) as c_m:
+                    my_manager.cancel_appointment(file_test)
+                self.assertEqual(c_m.exception.message, expected_value)
+
