@@ -2,7 +2,7 @@
 
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.data.vaccination_appointment import VaccinationAppointment
-
+from uc3m_care.data.vaccine_cancel import VaccineCancelation
 
 
 class VaccineManager:
@@ -48,14 +48,15 @@ class VaccineManager:
         def cancel_appointment(self, input_file):
             """Returns a string that represent the date_signature of the appointment canceled or
             a VaccineManagementException"""
-            patient_system_id="72b72255619afeed8bd26861a2bc2caf"
-            patient_phone_number="+34123456789"
-            input_date = "2022-03-18"
+            #patient_system_id="72b72255619afeed8bd26861a2bc2caf"
+            #patient_phone_number="+34123456789"
+            #input_date = "2022-03-18"
+            #date_signature_date = VaccinationAppointment.cancelation_appointment(VaccinationAppointment(patient_system_id, patient_phone_number,input_date), input_file)
+            cancelation = VaccineCancelation.cancel_appointment(input_file)
+            cancelation.confirm_cancelation()
+            cancelation.save_cancelation()
+            return cancelation.date_signature
 
-            date_signature_date = VaccinationAppointment.cancelation_appointment(VaccinationAppointment(patient_system_id, patient_phone_number,input_date), input_file)
-            #boolean = self.vaccine_patient(date_signature_date[0], date_signature_date[1])
-            #VaccinationAppointment.check_administration(VaccinationAppointment(patient_system_id, patient_phone_number,input_date),boolean)
-            return date_signature_date
 
 
     instance = None

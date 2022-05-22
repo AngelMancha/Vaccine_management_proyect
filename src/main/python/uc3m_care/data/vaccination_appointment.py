@@ -1,5 +1,7 @@
 """Contains the class Vaccination Appointment"""
 from datetime import datetime
+from pathlib import Path
+import json
 import hashlib
 from freezegun import freeze_time
 from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
@@ -7,11 +9,9 @@ from uc3m_care.data.attribute.attribute_patient_system_id import PatientSystemId
 from uc3m_care.data.attribute.attribute_date_signature import DateSignature
 from uc3m_care.data.vaccination_log import VaccinationLog
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
-from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
-from pathlib import Path
-import json
+from uc3m_care.parser.cancel_json_parser import CancelJsonParser
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
 #pylint: disable=too-many-instance-attributes
@@ -116,8 +116,6 @@ class VaccinationAppointment():
     @classmethod
     def create_appointment_from_json_file( cls, json_file, date ):
         """returns the vaccination appointment for the received input json file"""
-        #VaccinationAppointment.check_date(VaccinationAppointment(), date)
-
         try:
             datetime.fromisoformat(date)
         except ValueError:
@@ -133,6 +131,14 @@ class VaccinationAppointment():
             appointment_parser.json_content[appointment_parser.PATIENT_SYSTEM_ID_KEY], appointment_parser.json_content[appointment_parser.CONTACT_PHONE_NUMBER_KEY], date)
 
         return new_appointment
+
+    @classmethod
+    def cancel_appointment_from_json(cls, file_cancel_date):
+        """Returns the date_signature o for the recieved input json file"""
+        file_cancel_parser = CancelJsonParser(file_cancel_date)
+        date_signature = cls(file_cancel_parser.json_content[file_cancel_parser.DATE_SIGNATURE_KEY])
+        print(date_signature)
+        return date_signature
 
     def check_date(self, date):
         """Checks that the date has the correct format and it has a correct value"""
@@ -150,6 +156,7 @@ class VaccinationAppointment():
 
     def cancelation_appointment(self, file_cancel_date):
         # first read the file
+
         try:
             with open(file_cancel_date, "r", encoding="utf-8", newline="") as file:
                 data_list = json.load(file)
