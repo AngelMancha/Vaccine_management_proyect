@@ -95,7 +95,7 @@ class VaccineCancelation():
 
         vaccination_date = appointment_record["_VaccinationAppointment__appointment_date"]
         # check the date
-        print("\nADIOOOOOOOOOOOOOOOOOS\n")
+
         self.check_date_cancel(vaccination_date)
 
         """
@@ -104,8 +104,6 @@ class VaccineCancelation():
         if appointment_admin_rec is not None:
             raise VaccineManagementException("Vaccination has already been administered")
         """
-
-        #check if the appointment has been canceled with final_cancel.json
 
         already_canceled = self.check_if_canceled(self.__date_signature)
         if already_canceled is True:
@@ -122,8 +120,6 @@ class VaccineCancelation():
 
         #cancel de appointment
         self.cancelation_appointment(self.__date_signature, self.__cancelation_type)
-
-
 
 
         # save the canceled appointment in a json_file
@@ -157,7 +153,7 @@ class VaccineCancelation():
                     json.dump(store_date, a_file)
                     a_file.close()
 
-
+    """
     def save_store_cancel(self, date_signature, reason):
         file_store_cancelation = str(Path.home()) + "/PycharmProjects/G88.2022.T05.FP/src/JsonFiles/" + "final_cancel.json"
         # first read the file
@@ -180,6 +176,7 @@ class VaccineCancelation():
             raise VaccineManagementException("Wrong file or file path") from ex
         return True
 
+        """
 
     def check_if_canceled(self, date_signature):
             file_store_cancelation = str(Path.home()) + "/PycharmProjects/G88.2022.T05.FP/src/JsonFiles/" + "store_cancelation.json"

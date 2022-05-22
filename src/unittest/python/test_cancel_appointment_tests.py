@@ -13,28 +13,28 @@ from uc3m_care.storage.file_cancel_json_store import CancelationJsonStore
 
 param_list_nok = [("test_dup_all.json", "JSON Decode Error - Wrong JSON Format"), # bien
                   ("test_dup_content.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_date_sig.json", "Store_date not found"),
+                  ("test_dup_date_sig.json", "File is not found"),
                   ("test_dup_final_bracket.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_final_quote.json", "Store_date not found"),
-                  ("test_dup_init_quote.json", "Store_date not found"),
+                  ("test_dup_final_quote.json", "File is not found"),
+                  ("test_dup_init_quote.json", "File is not found"),
                   ("test_dup_initial_bracket.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_sep1.json", "Store_date not found"),
-                  ("test_dup_sep2.json", "Store_date not found"),
-                  ("test_dup_sep_2.json", "Store_date not found"),
-                  ("test_dup_value_d1.json", "Store_date not found"),
-                  ("test_dup_value_d2.json", "Store_date not found"),
-                  ("test_mod_comilla.json", "Store_date not found"),
-                  ("test_mod_initial_quote.json", "Store_date not found"),
-                  ("test_no_date_sig.json", "Store_date not found"),
+                  ("test_dup_sep1.json", "File is not found"),
+                  ("test_dup_sep2.json", "File is not found"),
+                  ("test_dup_sep_2.json", "File is not found"),
+                  ("test_dup_value_d1.json", "File is not found"),
+                  ("test_dup_value_d2.json", "File is not found"),
+                  ("test_mod_comilla.json", "File is not found"),
+                  ("test_mod_initial_quote.json", "File is not found"),
+                  ("test_no_date_sig.json", "File is not found"),
                   ("test_no_final_bracket.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_no_final_quote.json", "Store_date not found"),
-                  ("test_no_init_quote.json", "Store_date not found"),
+                  ("test_no_final_quote.json", "File is not found"),
+                  ("test_no_init_quote.json", "File is not found"),
                   ("test_no_initial_bracket.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_no_sep1.json", "Store_date not found"),
-                  ("test_no_sep2.json", "Store_date not found"),
-                  ("test_no_sep_2.json", "Store_date not found"),
-                  ("test_no_value_d1.json", "Store_date not found"),
-                  ("test_no_value_d2.json", "Store_date not found")
+                  ("test_no_sep1.json", "File is not found"),
+                  ("test_no_sep2.json", "File is not found"),
+                  ("test_no_sep_2.json", "File is not found"),
+                  ("test_no_value_d1.json", "File is not found"),
+                  ("test_no_value_d2.json", "File is not found")
                   ]
 
 mod_json_nok = [("test_dup_cn.json", "Wrong JSON"),
@@ -120,10 +120,12 @@ class TestCncelAppointment(TestCase):
 
     @freeze_time("2023-03-08")
     def test_cancel_vaccine_no_ok_passed(self):
-        file_test = JSON_FILES_RF3_PATH + "cancel_appointment_passed.json"
+        file_test = JSON_FILES_RF3_PATH + "cancel_appointment_ok.json"
+        self.test_cancel_vaccine_ok() # call this method to cancel the appointment
+        file_test_passed = JSON_FILES_RF3_PATH + "cancel_appointment_passed.json"
         my_manager = VaccineManager()
         with self.assertRaises(VaccineManagementException) as c_m:
-            my_manager.cancel_appointment(file_test)
+            my_manager.cancel_appointment(file_test_passed)
         self.assertEqual(c_m.exception.message, "The appointment has already passed")
 
     @freeze_time("2022-03-08")
@@ -133,7 +135,7 @@ class TestCncelAppointment(TestCase):
         my_manager = VaccineManager()
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.cancel_appointment(file_test)
-        self.assertEqual(c_m.exception.message, "This appointment is already canceled")
+        self.assertEqual(c_m.exception.message, "Vaccination has already been canceled")
 
 
     @freeze_time("2022-03-08")

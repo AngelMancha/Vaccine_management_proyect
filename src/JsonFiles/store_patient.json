@@ -7,5 +7,14 @@
     "_VaccinePatientRegister__age": "6",
     "_VaccinePatientRegister__time_stamp": 1646697600.0,
     "_VaccinePatientRegister__patient_sys_id": "72b72255619afeed8bd26861a2bc2caf"
+  },
+  {
+    "_VaccinePatientRegister__patient_id": "57c811e5-3f5a-4a89-bbb8-11c0464d53e6",
+    "_VaccinePatientRegister__full_name": "minombre tieneuncharmenosqmax",
+    "_VaccinePatientRegister__registration_type": "Family",
+    "_VaccinePatientRegister__phone_number": "+34333456789",
+    "_VaccinePatientRegister__age": "7",
+    "_VaccinePatientRegister__time_stamp": 1646697600.0,
+    "_VaccinePatientRegister__patient_sys_id": "0d49256644b963208cb8db044a3ebbe7"
   }
 ]
