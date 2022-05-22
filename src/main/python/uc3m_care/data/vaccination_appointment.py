@@ -208,11 +208,9 @@ class VaccinationAppointment():
                 if len(data_list["date_signature"]) != 64:
                     raise VaccineManagementException("Wrong JSON")
 
-                if len(data_list["reason"] == 0) or len(data_list["reason"]) > 100:
+                if len(data_list["reason"]) == 0 or len(data_list["reason"]) > 100:
                     raise VaccineManagementException("Wrong JSON")
 
-                else:
-                    raise VaccineManagementException("Wrong JSON")
 
         date_signature = data_list["date_signature"]
         if not found:

@@ -116,7 +116,7 @@ class TestCncelAppointment(TestCase):
         my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
                                           "minombre tienelalongitudmaxima",
                                           "Regular", "+34123456789", "6")
-
+        self.test_cancel_vaccine_ok()  # call this method to cancel the appointment
         for file_name, expected_value in param_list_nok:
             with self.subTest(test=file_name):
                 file_test = JSON_FILES_RF2_PATH + file_name
@@ -141,7 +141,7 @@ class TestCncelAppointment(TestCase):
         my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
                                           "minombre tienelalongitudmaxima",
                                           "Regular", "+34123456789", "6")
-
+        self.test_cancel_vaccine_ok()  # call this method to cancel the appointment
         for file_name, expected_value in param_list_nok:
             with self.subTest(test=file_name):
                 file_test = JSON_FILES_RF2_PATH + file_name
