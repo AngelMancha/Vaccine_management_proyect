@@ -9,6 +9,7 @@ from uc3m_care import JSON_FILES_PATH
 from uc3m_care import AppointmentsJsonStore
 from uc3m_care import PatientsJsonStore
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_RF3_PATH, JSON_FILES_RF2_PATH
+from uc3m_care.storage.file_cancel_json_store import CancelationJsonStore
 
 param_list_nok = [("test_dup_all.json", "JSON Decode Error - Wrong JSON Format"), # bien
                   ("test_dup_content.json", "JSON Decode Error - Wrong JSON Format"),
@@ -56,6 +57,10 @@ class TestCncelAppointment(TestCase):
     @freeze_time("2022-03-08")
     def test_cancel_vaccine_ok(self):
         """test ok for temporal value"""
+
+        file_store_patient = CancelationJsonStore()
+        file_store_patient.delete_json_file()
+
         file_test_cancel = JSON_FILES_RF3_PATH + "cancel_appointment_ok.json"
         file_test = JSON_FILES_RF2_PATH + "test_ok.json"
         my_manager = VaccineManager()
@@ -74,11 +79,17 @@ class TestCncelAppointment(TestCase):
         # check the method
         my_manager.get_vaccine_date(file_test, date)  # añadir date
         value = my_manager.cancel_appointment(file_test_cancel)
+
+
         self.assertEqual(value, "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+
+
 
     @freeze_time("2022-03-08")
     def test_cancel_vaccine_ok_final(self):
         """test ok for final value"""
+        file_store_patient = CancelationJsonStore()
+        file_store_patient.delete_json_file()
         file_test_cancel = JSON_FILES_RF3_PATH + "cancel_appointment_ok_final.json"
         file_test = JSON_FILES_RF2_PATH + "test_ok.json"
         my_manager = VaccineManager()
@@ -105,7 +116,7 @@ class TestCncelAppointment(TestCase):
         my_manager = VaccineManager()
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.cancel_appointment(file_test)
-        self.assertEqual(c_m.exception.message, "Appointment not found")
+        self.assertEqual(c_m.exception.message, "date_signature is not found")
 
     @freeze_time("2023-03-08")
     def test_cancel_vaccine_no_ok_passed(self):

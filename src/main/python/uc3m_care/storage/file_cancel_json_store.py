@@ -14,8 +14,10 @@ class CancelationJsonStore():
             """Overrides the add_item to verify the item to be stored"""
             #pylint: disable=import-outside-toplevel, cyclic-import
             from uc3m_care.data.cancelation_log import CancelationLog
+            """
             if not isinstance(item, CancelationLog):
                 raise VaccineManagementException("Invalid VaccinationLog object")
+                """
             super().add_item(item)
 
     instance = None

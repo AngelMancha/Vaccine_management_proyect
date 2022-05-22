@@ -18,10 +18,10 @@ class AppointmentsJsonStore():
             """Overrides the add_item method to verify the item to be stored"""
             #pylint: disable=import-outside-toplevel, cyclic-import
             from uc3m_care.data.vaccination_appointment import VaccinationAppointment
+
             if not isinstance(item, VaccinationAppointment):
-                print(item)
-                print(VaccinationAppointment)
                 raise VaccineManagementException(self.ERROR_INVALID_APPOINTMENT_OBJECT)
+
             super().add_item(item)
 
     instance = None

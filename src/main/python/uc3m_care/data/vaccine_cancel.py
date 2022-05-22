@@ -1,7 +1,11 @@
 """Contains the class Cancel Appointment"""
 from datetime import datetime
 import hashlib
+from pathlib import Path
+import json
 from freezegun import freeze_time
+
+from uc3m_care import VaccinationAppointment
 from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
 from uc3m_care.data.attribute.attribute_patient_system_id import PatientSystemId
 from uc3m_care.data.attribute.attribute_date_signature import DateSignature
@@ -88,22 +92,110 @@ class VaccineCancelation():
         if appointment_record is None:
             raise VaccineManagementException("date_signature is not found")
 
-        print(appointment_store["_VaccinationAppointment__appointment_date"])
-        vaccination_date = appointment_store["_VaccinationAppointment__appointment_date"]
+
+        vaccination_date = appointment_record["_VaccinationAppointment__appointment_date"]
         # check the date
+        print("\nADIOOOOOOOOOOOOOOOOOS\n")
         self.check_date_cancel(vaccination_date)
 
+        """
         appointment_administration = VaccinationJsonStore()
         appointment_admin_rec = appointment_administration.find_item(self.__date_signature)
         if appointment_admin_rec is not None:
             raise VaccineManagementException("Vaccination has already been administered")
+        """
 
-        cancelation_store = CancelationJsonStore()
-        cancel_record = cancelation_store.find_item(self.__date_signature) # it adds to the store_cancel the date signature
-        if cancel_record is not None:
+        #check if the appointment has been canceled with final_cancel.json
+
+        already_canceled = self.check_if_canceled(self.__date_signature)
+        if already_canceled is True:
             raise VaccineManagementException("Vaccination has already been canceled")
 
-        # if the cancelation type is temporal
-        if self.__cancelation_type == "Temporal":
-            appointment_store.add_item(self)
+
+        #check if the appointment has been canceled with store_cancelation.json
+        """
+        cancelation_store = CancelationJsonStore()
+        cancel_record = cancelation_store.find_item(self.__date_signature)
+        if cancel_record is not None:
+            raise VaccineManagementException("Vaccination has already been canceled")
+            """
+
+        #cancel de appointment
+        self.cancelation_appointment(self.__date_signature, self.__cancelation_type)
+
+
+
+
+        # save the canceled appointment in a json_file
+        #self.save_store_cancel(self.__date_signature, self.__reason)
+
+
+    def cancelation_appointment(self, date_signature, cancelation_type):
+
+        file_store_date = str(Path.home()) + "/PycharmProjects/G88.2022.T05.FP/src/JsonFiles/" + "store_date.json"
+        # first read the file
+        try:
+            with open(file_store_date, "r", encoding="utf-8", newline="") as file:
+                store_date = json.load(file)
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+        except FileNotFoundError as ex:
+            raise VaccineManagementException("Store_date not found") from ex
+
+        for item in store_date:
+            if item["_VaccinationAppointment__date_signature"] == date_signature:
+
+                if cancelation_type == "Final":
+                    store_date.remove(item)
+                    b_file = open(file_store_date, "w")
+                    json.dump(store_date, b_file)
+                    b_file.close()
+
+                if cancelation_type == "Temporal":
+                    item["Cancelation"] = "CONFIRMED"
+                    a_file = open(file_store_date, "w")
+                    json.dump(store_date, a_file)
+                    a_file.close()
+
+
+    def save_store_cancel(self, date_signature, reason):
+        file_store_cancelation = str(Path.home()) + "/PycharmProjects/G88.2022.T05.FP/src/JsonFiles/" + "final_cancel.json"
+        # first read the file
+        try:
+            with open(file_store_cancelation, "r", encoding="utf-8", newline="") as file:
+                data_list = json.load(file)
+        except FileNotFoundError:
+            # file is not found , so  init my data_list
+            data_list = []
+        except json.JSONDecodeError as ex:
+            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+
+        # append the date
+        data_list.append(date_signature.__str__())
+        data_list.append(reason.__str__())
+        try:
+            with open(file_store_cancelation, "w", encoding="utf-8", newline="") as file:
+                json.dump(data_list, file, indent=2)
+        except FileNotFoundError as ex:
+            raise VaccineManagementException("Wrong file or file path") from ex
+        return True
+
+
+    def check_if_canceled(self, date_signature):
+            file_store_cancelation = str(Path.home()) + "/PycharmProjects/G88.2022.T05.FP/src/JsonFiles/" + "store_cancelation.json"
+            try:
+                with open(file_store_cancelation, "r", encoding="utf-8", newline="") as file:
+                    data_list = json.load(file)
+            except FileNotFoundError:
+                # file is not found , so  init my data_list
+                data_list = []
+            except json.JSONDecodeError as ex:
+                raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+
+            for item in data_list:
+                if item["_VaccineCancelation__date_signature"]==date_signature:
+                     return True
+
+            return False
+
 
