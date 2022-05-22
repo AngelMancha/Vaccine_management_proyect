@@ -55,8 +55,31 @@ class TestCncelAppointment(TestCase):
     """Class for testing the cancel_vaccine method"""
     @freeze_time("2022-03-08")
     def test_cancel_vaccine_ok(self):
-        """test ok"""
+        """test ok for temporal value"""
         file_test_cancel = JSON_FILES_RF3_PATH + "cancel_appointment_ok.json"
+        file_test = JSON_FILES_RF2_PATH + "test_ok.json"
+        my_manager = VaccineManager()
+        # date = "2023-04-06"
+        date = "2022-03-18"
+        # first , prepare my test , remove store patient
+        file_store = PatientsJsonStore()
+        file_store.delete_json_file()
+        file_store_date = AppointmentsJsonStore()
+        file_store_date.delete_json_file()
+
+        # add a patient in the store
+        my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
+                                          "minombre tienelalongitudmaxima",
+                                          "Regular", "+34123456789", "6")
+        # check the method
+        my_manager.get_vaccine_date(file_test, date)  # añadir date
+        value = my_manager.cancel_appointment(file_test_cancel)
+        self.assertEqual(value, "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+
+    @freeze_time("2022-03-08")
+    def test_cancel_vaccine_ok_final(self):
+        """test ok for final value"""
+        file_test_cancel = JSON_FILES_RF3_PATH + "cancel_appointment_ok_final.json"
         file_test = JSON_FILES_RF2_PATH + "test_ok.json"
         my_manager = VaccineManager()
         # date = "2023-04-06"
