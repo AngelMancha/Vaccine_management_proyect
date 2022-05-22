@@ -8,7 +8,7 @@ class CancelationJsonStore():
     class __CancelationJsonStore(JsonStore):
         """Subclass of JsonStore for managing the VaccinationLog"""
         _FILE_PATH = JSON_FILES_PATH + "store_cancelation.json"
-        _ID_FIELD = "_VaccinationLog__date_signature"
+        _ID_FIELD = "_VaccineCancelation__date_signature"
 
         def add_item( self, item ):
             """Overrides the add_item to verify the item to be stored"""
