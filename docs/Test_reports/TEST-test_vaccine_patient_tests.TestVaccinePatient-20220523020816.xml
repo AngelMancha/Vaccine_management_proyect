@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test_vaccine_patient_tests.TestVaccinePatient-20220523020816" tests="6" file="test_vaccine_patient_tests.py" time="0.024" timestamp="2022-05-23T02:08:16" failures="0" errors="0" skipped="2">
+	<testcase classname="test_vaccine_patient_tests.TestVaccinePatient" name="test_vaccine_patient_bad_date_signature" time="0.006" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_vaccine_patient_tests.TestVaccinePatient" name="test_vaccine_patient_no_date" time="0.004" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_vaccine_patient_tests.TestVaccinePatient" name="test_vaccine_patient_not_found_date_signature" time="0.004" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_vaccine_patient_tests.TestVaccinePatient" name="test_vaccine_patient_ok" time="0.004" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_vaccine_patient_tests.TestVaccinePatient" name="test_vaccine_patient_no_store_date" time="0.003" timestamp="2022-05-23T02:08:16">
+		<skipped type="skip" message="This exception won't be raised after the refactoring process"/>
+	</testcase>
+	<testcase classname="test_vaccine_patient_tests.TestVaccinePatient" name="test_vaccine_patient_store_date_is_empty" time="0.003" timestamp="2022-05-23T02:08:16">
+		<skipped type="skip" message="This exception won't be raised in order for the implementation of the cancelation function to work"/>
+	</testcase>
+</testsuite>

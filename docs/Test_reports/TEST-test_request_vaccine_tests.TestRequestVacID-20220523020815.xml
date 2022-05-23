@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test_request_vaccine_tests.TestRequestVacID-20220523020815" tests="8" file="test_request_vaccine_tests.py" time="0.097" timestamp="2022-05-23T02:08:15" failures="0" errors="0" skipped="0">
+	<testcase classname="test_request_vaccine_tests.TestRequestVacID" name="test__add_family_valid_request_vaccination" time="0.005" timestamp="2022-05-23T02:08:15"/>
+	<testcase classname="test_request_vaccine_tests.TestRequestVacID" name="test__duplicate_valid_request_vaccination" time="0.001" timestamp="2022-05-23T02:08:15"/>
+	<testcase classname="test_request_vaccine_tests.TestRequestVacID" name="test_parametrized_not_valid_request_vaccination" time="0.059" timestamp="2022-05-23T02:08:15"/>
+	<testcase classname="test_request_vaccine_tests.TestRequestVacID" name="test_parametrized_valid_request_vaccination" time="0.017" timestamp="2022-05-23T02:08:15"/>
+	<testcase classname="test_request_vaccine_tests.TestRequestVacID" name="test_request_registration_type_nok" time="0.003" timestamp="2022-05-23T02:08:15"/>
+	<testcase classname="test_request_vaccine_tests.TestRequestVacID" name="test_request_vaccination_id_nok_uuid" time="0.003" timestamp="2022-05-23T02:08:15"/>
+	<testcase classname="test_request_vaccine_tests.TestRequestVacID" name="test_request_vaccination_id_nok_uuid_2" time="0.003" timestamp="2022-05-23T02:08:15"/>
+	<testcase classname="test_request_vaccine_tests.TestRequestVacID" name="test_request_vaccination_id_ok" time="0.005" timestamp="2022-05-23T02:08:15"/>
+</testsuite>

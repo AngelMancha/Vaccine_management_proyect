@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test_cancel_appointment_tests.TestCncelAppointment-20220523020816" tests="8" file="test_cancel_appointment_tests.py" time="0.312" timestamp="2022-05-23T02:08:16" failures="0" errors="0" skipped="0">
+	<testcase classname="test_cancel_appointment_tests.TestCncelAppointment" name="test_cancel_vaccine_no_ok_canceled" time="0.061" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_cancel_appointment_tests.TestCncelAppointment" name="test_cancel_vaccine_no_ok_json" time="0.094" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_cancel_appointment_tests.TestCncelAppointment" name="test_cancel_vaccine_no_ok_not_exist" time="0.002" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_cancel_appointment_tests.TestCncelAppointment" name="test_cancel_vaccine_no_ok_parameter" time="0.088" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_cancel_appointment_tests.TestCncelAppointment" name="test_cancel_vaccine_no_ok_passed" time="0.007" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_cancel_appointment_tests.TestCncelAppointment" name="test_cancel_vaccine_ok" time="0.003" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_cancel_appointment_tests.TestCncelAppointment" name="test_cancel_vaccine_ok_final" time="0.006" timestamp="2022-05-23T02:08:16"/>
+	<testcase classname="test_cancel_appointment_tests.TestCncelAppointment" name="test_cancel_vaccine_wrong_value" time="0.050" timestamp="2022-05-23T02:08:16"/>
+</testsuite>
